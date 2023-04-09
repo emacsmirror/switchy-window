@@ -57,7 +57,7 @@
 ;;; Code:
 
 (defgroup switchy nil
-  "switchy is a last-recently-used window-switcher."
+  "Switchy is a last-recently-used window-switcher."
   :group 'windows)
 
 (defvar switchy--tick-counter 0
@@ -70,8 +70,11 @@ A higher TICK value means a window has more recently been visited.
 Only for internal use.")
 
 (defcustom switchy-delay 1.5
-  "Number of seconds before the current window gets locked in after
-switching and the switching sequence ends."
+  "Number of seconds before the current window gets locked in.
+If more time elapses between consecutive invocations of
+`switchy-window', the current window's tick (timestamp) is
+updated in `switchy--tick-alist' and the current switching cycle
+ends."
   :type 'number)
 
 (defvar switchy--timer nil
@@ -82,7 +85,7 @@ Only for internal use.")
   "The windows having already been visited in the current switching cycle.")
 
 (defun switchy--on-window-selection-change (&optional frame)
-  "Record the next `switchy--tick-counter' value for the selected window.
+  "Record the next `switchy--tick-counter' value for the selected window of FRAME.
 Meant to be used in `window-selection-change-functions' which is
 arranged by `switchy-minor-mode'."
   (when (eq frame (selected-frame))
@@ -168,10 +171,12 @@ No keys are bound by default.  Bind the main command
                 (keymap-global-unset \"<remap> <other-window>\"))))")
 
 (define-minor-mode switchy-minor-mode
-  "Activates recording of window selection ticks, i.e., timestamps
-for figuring out the last-recently-used order of windows.
+  "Activates recording of window selection ticks.
+Those are the timestamps for figuring out the last-recently-used
+order of windows.
 
-It uses the keymap `switchy-minor-mode-map', which see."
+The minor-mode provides the keymap `switchy-minor-mode-map',
+which see."
   :global t
   :keymap switchy-minor-mode-map
   (if switchy-minor-mode
@@ -181,3 +186,7 @@ It uses the keymap `switchy-minor-mode-map', which see."
                  #'switchy--on-window-selection-change)))
 
 (provide 'switchy)
+
+(provide 'switchy)
+
+;;; switchy.el ends here
