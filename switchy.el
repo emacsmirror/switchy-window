@@ -85,7 +85,7 @@ Only for internal use.")
   "Record the next `switchy--tick-counter' value for the selected window.
 Meant to be used in `window-selection-change-functions' which is
 arranged by `switchy-minor-mode'."
-  (when frame
+  (when (eq frame (selected-frame))
     (when switchy--timer
       (cancel-timer switchy--timer))
     (setq switchy--timer (run-at-time
