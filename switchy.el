@@ -107,6 +107,10 @@ LRU order and cycles when all windows have been visited.  If
 the now selected window gets its tick updated (a kind of
 timestamp)."
   (interactive)
+
+  (unless switchy-minor-mode
+    (user-error "switchy-window requires `switchy-minor-mode' being active"))
+
   ;; Remove dead windows.
   (setq switchy--tick-alist (seq-filter
                              (lambda (e)
