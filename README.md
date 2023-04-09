@@ -1,4 +1,4 @@
-# switchy.el: A last-recently-user window switcher for Emacs
+# switchy.el: A last-recently-used window switcher for Emacs
 
 Switchy is a last-recently-used window switcher.  It suits my personal Emacs
 layout and workflow where I usually have at most two editing windows but up

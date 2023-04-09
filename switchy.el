@@ -1,4 +1,4 @@
-;;; switchy.el --- A last-recently-user window switcher  -*- lexical-binding: t; -*-
+;;; switchy.el --- A last-recently-used window switcher  -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2023 Tassilo Horn
 ;;
