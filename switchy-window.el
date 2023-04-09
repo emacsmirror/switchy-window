@@ -1,6 +1,6 @@
 ;;; switchy-window.el --- A most-recently-used window switcher  -*- lexical-binding: t; -*-
 ;;
-;; Copyright (C) 2023 Tassilo Horn
+;; Copyright (C) 2023 Free Software Foundation, Inc
 ;;
 ;; Author: Tassilo Horn <tsdh@gnu.org>
 ;; Version: 1.0
