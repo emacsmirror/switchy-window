@@ -1,4 +1,4 @@
-EMACS = emacs --batch -q -no-site-file -no-init-file
+EMACS = emacs --batch -q -no-site-file -no-init-file -l ~/.emacs.d/elpa/compat-*/compat.el
 
 ELS = $(wildcard *.el)
 OBJECTS = $(ELS:.el=.elc)

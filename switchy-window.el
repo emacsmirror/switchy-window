@@ -87,7 +87,7 @@ Only for internal use.")
   "The windows having already been visited in the current switching cycle.")
 
 (defun switchy-window--on-window-selection-change (&optional frame)
-  "Record the next `switchy-window--tick-counter' value for the selected window of FRAME.
+  "Record the next tick value for the selected window of FRAME.
 Meant to be used in `window-selection-change-functions' which is
 arranged by `switchy-window-minor-mode'."
   (when (eq frame (selected-frame))
@@ -100,6 +100,37 @@ arranged by `switchy-window-minor-mode'."
                                                     switchy-window--tick-alist)
                                          (cl-incf switchy-window--tick-counter))
                                    (setq switchy-window--visited-windows nil))))))
+
+(defvar-keymap switchy-window-minor-mode-map
+  :doc "The mode map of `switchy-window-minor-mode'.
+No keys are bound by default.  Bind the main command
+`switchy-window' to a key of your liking, e.g.,
+
+  ;; That\\='s what I use.
+  (keymap-set switchy-window-minor-mode-map \"C-<\" #\\='switchy-window)
+
+  ;; Or as a substitute for `other-window'.
+  (add-hook \\='switchy-minor-mode-hook
+            (lambda ()
+              (if switchy-window-minor-mode
+                  (keymap-global-set \"<remap> <other-window>\"
+                                     #\\='switchy-window)
+                (keymap-global-unset \"<remap> <other-window>\"))))")
+
+;;;###autoload
+(define-minor-mode switchy-window-minor-mode
+  "Activates recording of window selection ticks.
+Those are the timestamps for figuring out the last-recently-used
+order of windows.
+
+The minor-mode provides the keymap `switchy-window-minor-mode-map',
+which see."
+  :global t
+  (if switchy-window-minor-mode
+      (add-hook 'window-selection-change-functions
+                #'switchy-window--on-window-selection-change)
+    (remove-hook 'window-selection-change-functions
+                 #'switchy-window--on-window-selection-change)))
 
 ;;;###autoload
 (defun switchy-window (&optional arg)
@@ -155,37 +186,6 @@ timestamp)."
       (when (length> switchy-window--visited-windows 1)
         (setq switchy-window--visited-windows nil)
         (switchy-window)))))
-
-(defvar-keymap switchy-window-minor-mode-map
-  :doc "The mode map of `switchy-window-minor-mode'.
-No keys are bound by default.  Bind the main command
-`switchy-window' to a key of your liking, e.g.,
-
-  ;; That\\='s what I use.
-  (keymap-set switchy-window-minor-mode-map \"C-<\" #\\='switchy-window)
-
-  ;; Or as a substitute for `other-window'.
-  (add-hook \\='switchy-minor-mode-hook
-            (lambda ()
-              (if switchy-window-minor-mode
-                  (keymap-global-set \"<remap> <other-window>\"
-                                     #\\='switchy-window)
-                (keymap-global-unset \"<remap> <other-window>\"))))")
-
-;;;###autoload
-(define-minor-mode switchy-window-minor-mode
-  "Activates recording of window selection ticks.
-Those are the timestamps for figuring out the last-recently-used
-order of windows.
-
-The minor-mode provides the keymap `switchy-window-minor-mode-map',
-which see."
-  :global t
-  (if switchy-window-minor-mode
-      (add-hook 'window-selection-change-functions
-                #'switchy-window--on-window-selection-change)
-    (remove-hook 'window-selection-change-functions
-                 #'switchy-window--on-window-selection-change)))
 
 (provide 'switchy-window)
 
