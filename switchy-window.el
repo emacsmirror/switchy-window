@@ -1,4 +1,4 @@
-;;; switchy-window.el --- A last-recently-used window switcher  -*- lexical-binding: t; -*-
+;;; switchy-window.el --- A most-recently-used window switcher  -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2023 Tassilo Horn
 ;;
@@ -28,13 +28,13 @@
 ;;
 ;;; Commentary:
 ;;
-;; switchy-window.el is a last-recently-used window switcher.  It suits my
+;; switchy-window.el is a most-recently-used window switcher.  It suits my
 ;; personal Emacs layout and workflow where I usually have at most two editing
 ;; windows but up to three side-windows which I have to select only seldomly.
 ;;
 ;; The idea of switchy-window is simple: when you invoke `switchy-window' in
 ;; quick succession, it will switch to one window after the other in
-;; last-recently-used order.  Once you stop switching for long enough time
+;; most-recently-used order.  Once you stop switching for long enough time
 ;; (`switchy-window-delay', 1.5 seconds by default), the selected window gets
 ;; locked in, i.e., its LRU timestamp is updated and this switching sequence is
 ;; ended.  Thusly, you can toggle between two windows simply by invoking
@@ -59,11 +59,11 @@
 (require 'compat)
 
 (defgroup switchy-window nil
-  "Switchy is a last-recently-used window-switcher."
+  "Switchy is a most-recently-used window-switcher."
   :group 'windows)
 
 (defvar switchy-window--tick-counter 0
-  "Values of this counter represent the last-recently-used order of windows.
+  "Values of this counter represent the most-recently-used order of windows.
 Only for internal use.")
 
 (defvar switchy-window--tick-alist nil
@@ -120,7 +120,7 @@ No keys are bound by default.  Bind the main command
 ;;;###autoload
 (define-minor-mode switchy-window-minor-mode
   "Activates recording of window selection ticks.
-Those are the timestamps for figuring out the last-recently-used
+Those are the timestamps for figuring out the most-recently-used
 order of windows.
 
 The minor-mode provides the keymap `switchy-window-minor-mode-map',
@@ -134,7 +134,7 @@ which see."
 
 ;;;###autoload
 (defun switchy-window (&optional arg)
-  "Switch to other windows in last-recently-used order.
+  "Switch to other windows in most-recently-used order.
 If prefix ARG is given, use least-recently-used order.
 
 If the time between consecutive invocations is smaller than

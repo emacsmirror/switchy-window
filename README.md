@@ -1,12 +1,12 @@
-# switchy-window.el: A last-recently-used window switcher for Emacs
+# switchy-window.el: A most-recently-used window switcher for Emacs
 
-`switchy-window.el` is a last-recently-used window switcher.  It suits my
+`switchy-window.el` is a most-recently-used window switcher.  It suits my
 personal Emacs layout and workflow where I usually have at most two editing
 windows but up to three side-windows which I have to select only seldomly.
 
 The idea of `switchy-window.el` is simple: when you invoke `switchy-window` in
 quick succession, it will switch to one window after the other in
-last-recently-used order.  Once you stop switching for long enough time
+most-recently-used order.  Once you stop switching for long enough time
 (`switchy-window-delay`, 1.5 seconds by default), the selected window gets
 locked in, i.e., its LRU timestamp is updated and this switching sequence is
 ended.  Thusly, you can toggle between two windows simply by invoking
