@@ -1,4 +1,4 @@
-;;; switchy.el --- A last-recently-used window switcher  -*- lexical-binding: t; -*-
+;;; switchy-window.el --- A last-recently-used window switcher  -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2023 Tassilo Horn
 ;;
@@ -10,7 +10,7 @@
 ;; Package-Requires: ((emacs "25.1") (compat "29.1.3.4"))
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; This file is NOT part of GNU Emacs.
+;; This file is part of GNU Emacs.
 ;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License
@@ -27,22 +27,22 @@
 ;;
 ;;; Commentary:
 ;;
-;; Switchy is a last-recently-used window switcher.  It suits my personal Emacs
-;; layout and workflow where I usually have at most two editing windows but up
-;; to three side-windows which I have to select only seldomly.
+;; Switchy-Window is a last-recently-used window switcher.  It suits my
+;; personal Emacs layout and workflow where I usually have at most two editing
+;; windows but up to three side-windows which I have to select only seldomly.
 ;;
-;; The idea of switchy is simple: when you invoke `switchy-window' in quick
-;; succession, it will switch to one window after the other in
+;; The idea of switchy-window is simple: when you invoke `switchy-window' in
+;; quick succession, it will switch to one window after the other in
 ;; last-recently-used order.  Once you stop switching for long enough time
-;; (`switchy-delay', 1.5 seconds by default), the selected window gets locked
-;; in, i.e., its LRU timestamp is updated and this switching sequence is ended.
-;; Thusly, you can toggle between two windows simply by invoking
-;; `switchy-window', waiting at least `switchy-delay', and then invoking
+;; (`switchy-window-delay', 1.5 seconds by default), the selected window gets
+;; locked in, i.e., its LRU timestamp is updated and this switching sequence is
+;; ended.  Thusly, you can toggle between two windows simply by invoking
+;; `switchy-window', waiting at least `switchy-window-delay', and then invoking
 ;; `switchy-window' again to switch back to the original window.
 ;;
-;; Activate `switchy-minor-mode' which tracks window changes and bind
-;; `switchy-window' to a key of your liking in `switchy-minor-mode-map' (or
-;; globally, see the variable's docstring for examples).
+;; Activate `switchy-window-minor-mode' which tracks window changes and bind
+;; `switchy-window' to a key of your liking in `switchy-window-minor-mode-map'
+;; (or globally, see the variable's docstring for examples).
 ;;
 ;; Hint: Since the order of window switching is not as obvious as it is with
 ;; `other-window', adding a bit visual feedback to window selection changes can
@@ -53,80 +53,82 @@
 ;;              (when (eq frame (selected-frame))
 ;;                (pulse-momentary-highlight-one-line))))
 
-
 ;;; Code:
 
-(defgroup switchy nil
+(require 'compat)
+
+(defgroup switchy-window nil
   "Switchy is a last-recently-used window-switcher."
   :group 'windows)
 
-(defvar switchy--tick-counter 0
+(defvar switchy-window--tick-counter 0
   "Values of this counter represent the last-recently-used order of windows.
 Only for internal use.")
 
-(defvar switchy--tick-alist nil
+(defvar switchy-window--tick-alist nil
   "An alist with entries (WINDOW . TICK).
-A higher TICK value means a window has more recently been visited.
-Only for internal use.")
+A higher TICK value means a window has more recently been
+visited.  Only for internal use.")
 
-(defcustom switchy-delay 1.5
+(defcustom switchy-window-delay 1.5
   "Number of seconds before the current window gets locked in.
 If more time elapses between consecutive invocations of
 `switchy-window', the current window's tick (timestamp) is
-updated in `switchy--tick-alist' and the current switching cycle
-ends."
+updated in `switchy-window--tick-alist' and the current switching
+cycle ends."
   :type 'number)
 
-(defvar switchy--timer nil
-  "The timer locking in the current window after `switchy-delay' seconds.
+(defvar switchy-window--timer nil
+  "The timer locking in the current window after `switchy-window-delay' seconds.
 Only for internal use.")
 
-(defvar switchy--visited-windows nil
+(defvar switchy-window--visited-windows nil
   "The windows having already been visited in the current switching cycle.")
 
-(defun switchy--on-window-selection-change (&optional frame)
-  "Record the next `switchy--tick-counter' value for the selected window of FRAME.
+(defun switchy-window--on-window-selection-change (&optional frame)
+  "Record the next `switchy-window--tick-counter' value for the selected window of FRAME.
 Meant to be used in `window-selection-change-functions' which is
-arranged by `switchy-minor-mode'."
+arranged by `switchy-window-minor-mode'."
   (when (eq frame (selected-frame))
-    (when switchy--timer
-      (cancel-timer switchy--timer))
-    (setq switchy--timer (run-at-time
-                          switchy-delay nil
-                          (lambda ()
-                            (setf (alist-get (selected-window)
-                                             switchy--tick-alist)
-                                  (cl-incf switchy--tick-counter))
-                            (setq switchy--visited-windows nil))))))
+    (when switchy-window--timer
+      (cancel-timer switchy-window--timer))
+    (setq switchy-window--timer (run-at-time
+                                 switchy-window-delay nil
+                                 (lambda ()
+                                   (setf (alist-get (selected-window)
+                                                    switchy-window--tick-alist)
+                                         (cl-incf switchy-window--tick-counter))
+                                   (setq switchy-window--visited-windows nil))))))
 
+;;;###autoload
 (defun switchy-window (&optional arg)
   "Switch to other windows in last-recently-used order.
 If prefix ARG is given, use least-recently-used order.
 
 If the time between consecutive invocations is smaller than
-`switchy-delay' seconds, selects one after the other window in
+`switchy-window-delay' seconds, selects one after the other window in
 LRU order and cycles when all windows have been visited.  If
-`switchy-delay' has passed, the current switching cycle ends and
+`switchy-window-delay' has passed, the current switching cycle ends and
 the now selected window gets its tick updated (a kind of
 timestamp)."
   (interactive)
 
-  (unless switchy-minor-mode
-    (user-error "switchy-window requires `switchy-minor-mode' being active"))
+  (unless switchy-window-minor-mode
+    (user-error "switchy-window requires `switchy-window-minor-mode' being active"))
 
   ;; Remove dead windows.
-  (setq switchy--tick-alist (seq-filter
-                             (lambda (e)
-                               (window-live-p (car e)))
-                             switchy--tick-alist))
+  (setq switchy-window--tick-alist (seq-filter
+                                    (lambda (e)
+                                      (window-live-p (car e)))
+                                    switchy-window--tick-alist))
   ;; Add windows never selected.
   (dolist (win (window-list (selected-frame)))
-    (unless (assq win switchy--tick-alist)
-      (setf (alist-get win switchy--tick-alist) 0)))
+    (unless (assq win switchy-window--tick-alist)
+      (setf (alist-get win switchy-window--tick-alist) 0)))
 
   ;; Ensure the current window is marked as visited.
-  (setq switchy--visited-windows (cons (selected-window)
-                                       switchy--visited-windows))
+  (setq switchy-window--visited-windows (cons (selected-window)
+                                              switchy-window--visited-windows))
 
   (let ((win-entries (seq-filter
                       (lambda (e)
@@ -135,8 +137,8 @@ timestamp)."
                                (or (minibuffer-window-active-p win)
                                    (not (eq win (minibuffer-window
                                                  (selected-frame)))))
-                               (not (memq win switchy--visited-windows)))))
-                      switchy--tick-alist)))
+                               (not (memq win switchy-window--visited-windows)))))
+                      switchy-window--tick-alist)))
     (if win-entries
         (when-let ((win (car (seq-reduce (lambda (x e)
                                            (if (and x (funcall (if arg #'< #'>)
@@ -144,49 +146,46 @@ timestamp)."
                                                x
                                              e))
                                          win-entries nil))))
-
-          (progn
-            (setq switchy--visited-windows (cons win switchy--visited-windows))
-            (select-window win)))
+          (setq switchy-window--visited-windows
+                (cons win switchy-window--visited-windows))
+          (select-window win))
       ;; Start a new cycle if we're not at the start already, i.e., we visited
       ;; just one (the current) window.
-      (when (> (length switchy--visited-windows) 1)
-        (setq switchy--visited-windows nil)
+      (when (length> switchy-window--visited-windows 1)
+        (setq switchy-window--visited-windows nil)
         (switchy-window)))))
 
-(defvar switchy-minor-mode-map (make-sparse-keymap)
-  "The mode map of `switchy-minor-mode'.
+(defvar-keymap switchy-window-minor-mode-map
+  :doc "The mode map of `switchy-window-minor-mode'.
 No keys are bound by default.  Bind the main command
 `switchy-window' to a key of your liking, e.g.,
 
   ;; That\\='s what I use.
-  (keymap-set switchy-minor-mode-map \"C-<\" #\\='switchy-window)
+  (keymap-set switchy-window-minor-mode-map \"C-<\" #\\='switchy-window)
 
   ;; Or as a substitute for `other-window'.
   (add-hook \\='switchy-minor-mode-hook
             (lambda ()
-              (if switchy-minor-mode
+              (if switchy-window-minor-mode
                   (keymap-global-set \"<remap> <other-window>\"
                                      #\\='switchy-window)
                 (keymap-global-unset \"<remap> <other-window>\"))))")
 
-(define-minor-mode switchy-minor-mode
+;;;###autoload
+(define-minor-mode switchy-window-minor-mode
   "Activates recording of window selection ticks.
 Those are the timestamps for figuring out the last-recently-used
 order of windows.
 
-The minor-mode provides the keymap `switchy-minor-mode-map',
+The minor-mode provides the keymap `switchy-window-minor-mode-map',
 which see."
   :global t
-  :keymap switchy-minor-mode-map
-  (if switchy-minor-mode
+  (if switchy-window-minor-mode
       (add-hook 'window-selection-change-functions
-                #'switchy--on-window-selection-change)
+                #'switchy-window--on-window-selection-change)
     (remove-hook 'window-selection-change-functions
-                 #'switchy--on-window-selection-change)))
+                 #'switchy-window--on-window-selection-change)))
 
-(provide 'switchy)
+(provide 'switchy-window)
 
-(provide 'switchy)
-
-;;; switchy.el ends here
+;;; switchy-window.el ends here
