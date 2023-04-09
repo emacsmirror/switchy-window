@@ -4,14 +4,14 @@
 personal Emacs layout and workflow where I usually have at most two editing
 windows but up to three side-windows which I have to select only seldomly.
 
-The idea of switchy is simple: when you invoke `switchy-window` in quick
-succession, it will switch to one window after the other in last-recently-used
-order.  Once you stop switching for long enough time (`switchy-window-delay`,
-1.5 seconds by default), the selected window gets locked in, i.e., its LRU
-timestamp is updated and this switching sequence is ended.  Thusly, you can
-toggle between two windows simply by invoking `switchy-window`, waiting at
-least `switchy-window-delay`, and then invoking `switchy-window` again to
-switch back to the original window.
+The idea of `switchy-window.el` is simple: when you invoke `switchy-window` in
+quick succession, it will switch to one window after the other in
+last-recently-used order.  Once you stop switching for long enough time
+(`switchy-window-delay`, 1.5 seconds by default), the selected window gets
+locked in, i.e., its LRU timestamp is updated and this switching sequence is
+ended.  Thusly, you can toggle between two windows simply by invoking
+`switchy-window`, waiting at least `switchy-window-delay`, and then invoking
+`switchy-window` again to switch back to the original window.
 
 
 ## Usage
@@ -53,7 +53,13 @@ package](https://elpa.nongnu.org/nongnu/switchy-window.html) so that you can
 install it simply from `M-x list-packages RET` or using `use-package` like so:
 
 ```elisp
-
+(use-package switchy-window
+  :ensure t
+  :custom (switchy-window-delay 1.5) ;; That's the default value.
+  :bind   (:map switchy-window-minor-mode-map
+                ("C-<" . switchy-window))
+  :init
+  (switchy-window-minor-mode))
 ```
 
 ## Questions & Patches

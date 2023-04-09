@@ -5,8 +5,9 @@
 ;; Author: Tassilo Horn <tsdh@gnu.org>
 ;; Version: 1.0
 ;; Keywords: windows
-;; Homepage: https://sr.ht/~tsdh/switchy/
-;; Repository: https://git.sr.ht/~tsdh/switchy
+;; Homepage: https://sr.ht/~tsdh/switchy-window/
+;; Repository: https://git.sr.ht/~tsdh/switchy-window
+;; Bug-Tracker: https://todo.sr.ht/~tsdh/switchy-window
 ;; Package-Requires: ((emacs "25.1") (compat "29.1.3.4"))
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -27,7 +28,7 @@
 ;;
 ;;; Commentary:
 ;;
-;; Switchy-Window is a last-recently-used window switcher.  It suits my
+;; switchy-window.el is a last-recently-used window switcher.  It suits my
 ;; personal Emacs layout and workflow where I usually have at most two editing
 ;; windows but up to three side-windows which I have to select only seldomly.
 ;;
