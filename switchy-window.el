@@ -3,7 +3,7 @@
 ;; Copyright (C) 2023 Free Software Foundation, Inc
 ;;
 ;; Author: Tassilo Horn <tsdh@gnu.org>
-;; Version: 1.0
+;; Version: 1.1
 ;; Keywords: windows
 ;; Homepage: https://sr.ht/~tsdh/switchy-window/
 ;; Repository: https://git.sr.ht/~tsdh/switchy-window
