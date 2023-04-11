@@ -3,7 +3,7 @@
 ;; Copyright (C) 2023 Free Software Foundation, Inc
 ;;
 ;; Author: Tassilo Horn <tsdh@gnu.org>
-;; Version: 1.2
+;; Version: 1.3
 ;; Keywords: windows
 ;; Homepage: https://sr.ht/~tsdh/switchy-window/
 ;; Repository: https://git.sr.ht/~tsdh/switchy-window
@@ -112,14 +112,8 @@ No keys are bound by default.  Bind the main command
   (keymap-set switchy-window-minor-mode-map \"C-<\" #\\='switchy-window)
 
   ;; Or as a substitute for `other-window'.
-  (defun my-switchy-window-set-or-unset-key ()
-    (if switchy-window-minor-mode
-        (keymap-global-set \"<remap> <other-window>\"
-                           #\\='switchy-window)
-      (keymap-global-unset \"<remap> <other-window>\")))
-
-  (add-hook \\='switchy-window-minor-mode-hook
-            #\\='my-switchy-window-set-or-unset-key)")
+  (keymap-set switchy-window-minor-mode-map
+              \"<remap> <other-window>\" #\\='switchy-window)")
 
 ;;;###autoload
 (define-minor-mode switchy-window-minor-mode
