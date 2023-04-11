@@ -3,7 +3,7 @@
 ;; Copyright (C) 2023 Free Software Foundation, Inc
 ;;
 ;; Author: Tassilo Horn <tsdh@gnu.org>
-;; Version: 1.1
+;; Version: 1.2
 ;; Keywords: windows
 ;; Homepage: https://sr.ht/~tsdh/switchy-window/
 ;; Repository: https://git.sr.ht/~tsdh/switchy-window
@@ -49,10 +49,12 @@
 ;; `other-window', adding a bit visual feedback to window selection changes can
 ;; be helpful.  That can be done easily with the stock Emacs pulse.el, e.g.:
 ;;
-;;  (add-hook 'window-selection-change-functions
-;;            (lambda (frame)
-;;              (when (eq frame (selected-frame))
-;;                (pulse-momentary-highlight-one-line))))
+;; (defun my-pulse-line-on-window-selection-change (frame)
+;;   (when (eq frame (selected-frame))
+;;     (pulse-momentary-highlight-one-line)))
+;;
+;; (add-hook 'window-selection-change-functions
+;;           #'my-pulse-line-on-window-selection-change)
 
 ;;; Code:
 
@@ -106,16 +108,18 @@ arranged by `switchy-window-minor-mode'."
 No keys are bound by default.  Bind the main command
 `switchy-window' to a key of your liking, e.g.,
 
-  ;; That\\='s what I use.
+  ;; That's what I use.
   (keymap-set switchy-window-minor-mode-map \"C-<\" #\\='switchy-window)
 
   ;; Or as a substitute for `other-window'.
-  (add-hook \\='switchy-minor-mode-hook
-            (lambda ()
-              (if switchy-window-minor-mode
-                  (keymap-global-set \"<remap> <other-window>\"
-                                     #\\='switchy-window)
-                (keymap-global-unset \"<remap> <other-window>\"))))")
+  (defun my-switchy-window-set-or-unset-key ()
+    (if switchy-window-minor-mode
+        (keymap-global-set \"<remap> <other-window>\"
+                           #\\='switchy-window)
+      (keymap-global-unset \"<remap> <other-window>\")))
+
+  (add-hook \\='switchy-window-minor-mode-hook
+            #\\='my-switchy-window-set-or-unset-key)")
 
 ;;;###autoload
 (define-minor-mode switchy-window-minor-mode

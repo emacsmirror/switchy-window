@@ -27,12 +27,14 @@ globally.  Here are is a sample configuration:
 (keymap-set switchy-window-minor-mode-map "C-<" #'switchy-window)
 
 ;; Or as a substitute for `other-window'.
+(defun my-switchy-window-set-or-unset-key ()
+  (if switchy-window-minor-mode
+      (keymap-global-set "<remap> <other-window>"
+                         #'switchy-window)
+    (keymap-global-unset "<remap> <other-window>")))
+
 (add-hook 'switchy-window-minor-mode-hook
-          (lambda ()
-            (if switchy-window-minor-mode
-                (keymap-global-set "<remap> <other-window>"
-                                   #'switchy-window)
-              (keymap-global-unset "<remap> <other-window>"))))
+          #'my-switchy-window-set-or-unset-key)
 ```
 
 **Hint**: Since the order of window switching is not as obvious as it is with
@@ -40,10 +42,12 @@ globally.  Here are is a sample configuration:
 helpful.  That can be done easily with the stock Emacs `pulse.el`, e.g.:
 
 ```elisp
+(defun my-pulse-line-on-window-selection-change (frame)
+  (when (eq frame (selected-frame))
+    (pulse-momentary-highlight-one-line)))
+
 (add-hook 'window-selection-change-functions
-          (lambda (frame)
-            (when (eq frame (selected-frame))
-              (pulse-momentary-highlight-one-line))))
+          #'my-pulse-line-on-window-selection-change)
 ```
 
 ## Installation
