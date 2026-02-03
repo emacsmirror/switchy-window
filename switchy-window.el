@@ -146,6 +146,12 @@ timestamp)."
   (unless switchy-window-minor-mode
     (user-error "switchy-window requires `switchy-window-minor-mode' being active"))
 
+  ;; Treat intervening command same as timer elapsing: lock in current window
+  (unless (eq last-command 'switchy-window)
+    (setf (alist-get (selected-window) switchy-window--tick-alist)
+          (cl-incf switchy-window--tick-counter))
+    (setq switchy-window--visited-windows nil))
+
   ;; Remove dead windows.
   (setq switchy-window--tick-alist (seq-filter
                                     (lambda (e)
