@@ -1,9 +1,9 @@
 ;;; switchy-window.el --- A most-recently-used window switcher  -*- lexical-binding: t; -*-
 ;;
-;; Copyright (C) 2023 Free Software Foundation, Inc
+;; Copyright (C) 2023, 2026 Free Software Foundation, Inc
 ;;
 ;; Author: Tassilo Horn <tsdh@gnu.org>
-;; Version: 1.3
+;; Version: 1.4
 ;; Keywords: windows
 ;; Homepage: https://sr.ht/~tsdh/switchy-window/
 ;; Repository: https://git.sr.ht/~tsdh/switchy-window
